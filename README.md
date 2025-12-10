@@ -104,13 +104,10 @@ model = smf.ols('re78 ~ treat', data=lalonde).fit()
 
 # Multiple regression with covariates
 model = smf.ols('re78 ~ treat + age + educ + black + hispan + married + nodegree + re74 + re75', data=lalonde).fit()
-Frisch–Waugh–Lovell (FWL) Method
-python
-Copy code
+
 FWL_lalonde = lalonde.copy()
 debiasing_model = smf.ols('treat ~ age + educ + black + hispan + married + nodegree + re74 + re75', data=FWL_lalonde).fit()
 FWL_lalonde['treat_res'] = debiasing_model.resid
-
 denoising_model = smf.ols('re78 ~ age + educ + black + hispan + married + nodegree + re74 + re75', data=FWL_lalonde).fit()
 FWL_lalonde['re78_res'] = denoising_model.resid
 
@@ -137,7 +134,6 @@ def calculate_matched_treatment_effect(df):
     matched_data = pd.concat([treated, matched_control])
 
     return matched_data[matched_data['treat']==1]['re78'].mean() - matched_data[matched_data['treat']==0]['re78'].mean()
-Inverse Probability Weighting (IPW)
 
 def compute_ipw_ate(df):
     df = df.copy()
@@ -145,9 +141,7 @@ def compute_ipw_ate(df):
     treated_mean = np.sum(df[df['treat']==1]['re78']*df[df['treat']==1]['ipw']) / np.sum(df[df['treat']==1]['ipw'])
     control_mean = np.sum(df[df['treat']==0]['re78']*df[df['treat']==0]['ipw']) / np.sum(df[df['treat']==0]['ipw'])
     return treated_mean - control_mean
-Difference-in-Differences (DiD)
-python
-Copy code
+
 df_long = pd.DataFrame({
     "id": np.repeat(df.index, 2),
     "treat": np.repeat(df["treat"].to_numpy(), 2),
@@ -158,6 +152,7 @@ df_long = pd.DataFrame({
 model = smf.ols("earnings ~ treat * time", data=df_long).fit()
 did_ate = model.params["treat:time"]
 conf_int = model.conf_int().loc["treat:time"]
+
 Contact
 Email: ltan1@uchicago.edu
 
