@@ -52,15 +52,10 @@ from matplotlib import pyplot as plt
 import statsmodels.formula.api as smf
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import NearestNeighbors
-Reproduction Steps
-Load Data
-python
-Copy code
+
 lalonde = pd.read_csv('lalonde.csv')
 lalonde = lalonde.drop('ID', axis=1)
-Summary Statistics
-python
-Copy code
+
 control_df = lalonde[lalonde.treat == 0]
 treatment_df = lalonde[lalonde.treat == 1]
 
@@ -74,15 +69,9 @@ var = lalonde.groupby('treat')[X].var()
 
 # Normalized differences
 norm_diff = (mu - mu.loc[0]) / np.sqrt((var + var.loc[0]) / 2)
-Visualizations
-Set theme:
 
-python
-Copy code
 sns.set_theme(style="whitegrid", context="talk")
-Age and Education Distributions
-python
-Copy code
+
 plt.figure(figsize=(10, 6))
 sns.histplot(lalonde["age"], kde=True, bins=15, edgecolor="black")
 plt.title("Distribution of Age", fontsize=20, weight="bold")
@@ -96,9 +85,7 @@ plt.title("Distribution of Education Level (Years)", fontsize=20, weight="bold")
 plt.xlabel("Years of Education", fontsize=16)
 plt.ylabel("Count", fontsize=16)
 plt.show()
-Distributions by Treatment Group
-python
-Copy code
+
 sns.histplot(data=lalonde, x="age", hue="treat", kde=True, bins=15, edgecolor="black", palette="Set1", alpha=0.6)
 plt.title("Distribution of Age by Treatment Group", fontsize=20, weight="bold")
 plt.show()
@@ -106,16 +93,12 @@ plt.show()
 sns.histplot(data=lalonde, x="educ", hue="treat", kde=True, bins=15, edgecolor="black", palette="Set1", alpha=0.6)
 plt.title("Distribution of Education Level by Treatment Group", fontsize=20, weight="bold")
 plt.show()
-Earnings Comparison
-python
-Copy code
+
 data["treatment_group"] = data["treat"].map({1: "Treated", 0: "Control"})
 sns.boxplot(data=data, x="treatment_group", y="re78", width=0.25)
 plt.title("Earnings in 1978 by Treatment Group", fontsize=20, weight="bold")
 plt.show()
-Regression Adjustment
-python
-Copy code
+
 # Simple regression
 model = smf.ols('re78 ~ treat', data=lalonde).fit()
 
@@ -132,9 +115,7 @@ denoising_model = smf.ols('re78 ~ age + educ + black + hispan + married + nodegr
 FWL_lalonde['re78_res'] = denoising_model.resid
 
 final_model = smf.ols('re78_res ~ treat_res', data=FWL_lalonde).fit()
-Propensity Score Matching (PSM)
-python
-Copy code
+
 pre_treatment_vars = ['age', 'educ', 'married', 'nodegree', 'hispan', 'black', 're74', 're75']
 X = lalonde[pre_treatment_vars]
 y = lalonde['treat']
@@ -143,9 +124,7 @@ log_reg = LogisticRegression()
 log_reg.fit(X, y)
 
 lalonde['propensity_score_logistic'] = log_reg.predict_proba(X)[:, 1]
-Matching Function
-python
-Copy code
+
 def calculate_matched_treatment_effect(df):
     treated = df[df['treat'] == 1]
     control = df[df['treat'] == 0]
@@ -159,8 +138,7 @@ def calculate_matched_treatment_effect(df):
 
     return matched_data[matched_data['treat']==1]['re78'].mean() - matched_data[matched_data['treat']==0]['re78'].mean()
 Inverse Probability Weighting (IPW)
-python
-Copy code
+
 def compute_ipw_ate(df):
     df = df.copy()
     df['ipw'] = np.where(df['treat']==1, 1/df['propensity_score'], 1/(1-df['propensity_score']))
