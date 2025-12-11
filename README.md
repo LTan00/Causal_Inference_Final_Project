@@ -8,20 +8,6 @@ The analysis uses the **LaLonde dataset**, which combines experimental (NSW) and
 
 **Dataset:** `lalonde.csv` (must be present in the working directory)
 
----
-
-## Table of Contents
-1. [Project Overview](#project-overview)  
-2. [Dependencies](#dependencies)  
-3. [Reproduction Steps](#reproduction-steps)  
-    - [Load Data](#load-data)  
-    - [Summary Statistics](#summary-statistics)  
-    - [Visualizations](#visualizations)  
-    - [Regression Adjustment](#regression-adjustment)  
-    - [Propensity Score Matching (PSM)](#propensity-score-matching-psm)  
-    - [Inverse Probability Weighting (IPW)](#inverse-probability-weighting-ipw)  
-    - [Difference-in-Differences (DiD)](#difference-in-differences-did)  
-4. [Contact](#contact)  
 
 ---
 
